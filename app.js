@@ -19,8 +19,10 @@ app.use((req, res) => {
 });
 
 app.use((error, req, res, next) => {
-  if (error.status) {
-    return res.status(error.status).json({
+  console.error("Handling errors: ", error.message, error.name);
+
+  if (error.name === "ValidationError") {
+    return res.status(400).json({
       message: error.message,
     });
   }
@@ -31,7 +33,15 @@ app.use((error, req, res, next) => {
     });
   }
 
+  if (error.status) {
+    return res.status(error.status).json({
+      message: error.message,
+    });
+  }
+
   return res.status(500).json({
     message: "Internal server error",
   });
 });
+
+module.exports = app;
