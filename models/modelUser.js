@@ -4,7 +4,6 @@ const schema = mongoose.Schema(
     password: {
       type: String,
       required: [true, "Set password for user"],
-      minlength: 6,
     },
     email: {
       type: String,
