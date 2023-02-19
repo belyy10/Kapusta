@@ -20,7 +20,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.2",
     "morgan": "1.10.0",
-    "nanoid": "^3.3.4"
+    "nanoid": "^3.3.4",
+    "nodemailer": "^6.9.1"
   },
   "devDependencies": {
     "eslint": "7.19.0",
