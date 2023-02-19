@@ -21,10 +21,23 @@ const login = async (req, res, next) => {
       return next(Unauthorized("email or passwor is not valid"));
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_CODE, { expiresIn: "7d" });
-    await Users.findByIdAndUpdate({ _id: user._id }, { token: token });
+    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "1d",
+    });
+    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "30d",
+    });
 
-    res.status(200).json({ token, user: { email: user.email } });
+    await Users.findByIdAndUpdate(
+      { _id: user._id },
+      { accessToken: accessToken, refreshToken: refreshToken }
+    );
+
+    res.status(200).json({
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      user: { email: user.email },
+    });
   } catch (error) {
     next(error);
   }
