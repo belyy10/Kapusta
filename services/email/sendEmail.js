@@ -27,8 +27,8 @@ async function sendEmail({ to, html, subject }) {
       port: 465,
       secure: true,
       auth: {
-        user: "kasia-94@ukr.net",
-        pass: "qzmKQLfdBsuJST4E",
+        user: EMAIL_USER,
+        pass: EMAIL_PASS,
       },
     };
 
