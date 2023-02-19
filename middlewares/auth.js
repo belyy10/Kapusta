@@ -15,9 +15,20 @@ async function auth(req, res, next) {
       return next(Unauthorized("No token provided"));
     }
 
-    const { id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    jwt.verify(token, process.env.JWT_CODE, (err, decoded) => {
+      if (err) {
+        err = {
+          name: "TokenExpiredError",
+          message: "jwt expired",
+        };
+        return res.status(401).send(err);
+      }
+    });
+
+    const { id } = jwt.verify(token, process.env.JWT_CODE);
     const user = await Users.findById(id);
-    if (!user || !user.token) {
+
+    if (!user || !user.accessToken) {
       return next(Unauthorized("Not authorized"));
     }
     req.user = user;
