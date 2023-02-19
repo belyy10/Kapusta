@@ -29,7 +29,13 @@ async function register(req, res, next) {
     };
     await srvc.sendEmail(mail);
 
-    res.status(201).json({ user: savedUser });
+    res.status(201).json({
+      user: {
+        email: savedUser.email,
+        password: hasedPwd,
+        verificationToken: savedUser.verificationToken,
+      },
+    });
   } catch (error) {
     if (error.message.includes("E11000 duplicate key error")) {
       return next(Conflict("Email in use"));
