@@ -1,5 +1,5 @@
-const { Users } = require('../../models/modelUser');
-const { HttpError } = require("../helpers/index.js");
+const { Users } = require("../../models/modelUser");
+const { HttpError } = require("../../helpers/index");
 
 const updateBalance = async (req, res, next) => {
   try {
@@ -8,14 +8,14 @@ const updateBalance = async (req, res, next) => {
     const updateUser = await Users.findByIdAndUpdate(
       _id,
       { balance },
-      { new: true },
+      { new: true }
     );
     if (!updateUser) {
       throw new HttpError();
     }
     res.json({
-        status: 'success',
-        code: 200,
+      status: "success",
+      code: 200,
       user: {
         email: updateUser.email,
         balance: updateUser.balance,
@@ -24,7 +24,6 @@ const updateBalance = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-  console.log('updateBalance');
 };
 
 module.exports = updateBalance;
