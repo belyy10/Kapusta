@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema(
       required: [true, "Email is required"],
       unique: true,
     },
+    balance: {
+      type: Number,
+      default: null,
+    },
     accessToken: {
       type: String,
       default: null,
