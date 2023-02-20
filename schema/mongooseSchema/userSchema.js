@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema(
     },
     balance: {
       type: Number,
-      default: null,
+      default: 0,
     },
     accessToken: {
       type: String,
