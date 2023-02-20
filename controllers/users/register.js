@@ -25,7 +25,7 @@ async function register(req, res, next) {
     const mail = {
       to: email,
       subject: "Confirm email",
-      html: `<a target="_blanc" href='http://localhost:3000/api/users/verify/${verificationToken}'>Confirm email</a>`,
+      html: `<a target="_blanc" href='http://localhost:3000/api/users/verify/${verificationToken}'><b>Welcome to Kapu$ta!</b> <br> You have just registered! Please, confirm your email if you want to use Kapu$ta</a>`,
     };
     await srvc.sendEmail(mail);
 
