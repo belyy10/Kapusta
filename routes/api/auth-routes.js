@@ -13,5 +13,7 @@ router.post("/login", ctrl.login);
 router.post("/logout", auth, ctrl.logout);
 router.get("/current", auth, ctrl.current);
 router.get("/get-access-token", auth, ctrl.getAccessToken);
+router.patch("/balance", (res, req, err) => {
+    if(err) return err; auth, ctrl.updateBalance});
 
 module.exports = router;
