@@ -1,63 +1,63 @@
 const { HttpError } = require("../helpers/index.js");
 const { Users } = require("../models/modelUser.js");
-const { Transaction, addIncome } = require("../models/transaction");
-const { listExpenses, addExpenses } = require("../models/transaction");
+const { Transaction } = require("../models/transaction");
 
-// getting all expenses
-async function getAllExpenses(req, res, next) {
-  const usersId = req.user;
-  const expenses = await listExpenses(usersId);
-
-  res.json({
-    status: "success",
-    code: 200,
-    data: {
-      ...expenses,
-    },
-  });
+async function getTransactions(req, res, next) {
+  const userId = req.user._id;
+  const { type } = req.query;
+  const transactions = await Transaction.find({ owner: userId, type: type });
+  return res.json({ transactions });
 }
-// add a new expenses
-async function createExpenses(req, res, next) {
+
+async function createExpense(req, res, next) {
   const userId = req.user._id;
   const balance = req.user.balance;
-  const expenses = await addExpenses({
+  const expenses = await Transaction.create({
     ...req.body,
     owner: userId,
   });
-  // find user and update balance when creating a new expenses
-  await Users.findByIdAndUpdate(userId, { balance: balance - req.body.sum });
+  console.log(expenses);
+
+  const updatedUser = await Users.findByIdAndUpdate(
+    userId,
+    { balance: balance - req.body.sum },
+    { new: true }
+  );
 
   res.status(201).json({
     status: "success",
     code: 201,
     data: {
       expenses,
-      balance: balance - req.body.sum,
+      balance: updatedUser.balance,
     },
   });
 }
 
-// add a new Income
 async function createIncome(req, res, next) {
   const userId = req.user._id;
   const balance = req.user.balance;
-  const incomes = await addIncome({
+  const incomes = await Transaction.create({
     ...req.body,
     owner: userId,
   });
-  // find user and update balance when add new Income
-  await Users.findByIdAndUpdate(userId, { balance: balance + req.body.sum });
+
+  const updatedUser = await Users.findByIdAndUpdate(
+    userId,
+    { balance: balance + req.body.sum },
+    { new: true }
+  );
 
   res.status(201).json({
     status: "success",
     code: 201,
     data: {
       incomes,
-      balance: balance + req.body.sum,
+      balance: updatedUser.balance,
     },
   });
 }
-// delete transaction
+
 async function deleteTransaction(req, res, next) {
   const { id } = req.params;
   const transaction = await Transaction.findById(id);
@@ -70,7 +70,7 @@ async function deleteTransaction(req, res, next) {
 
 module.exports = {
   deleteTransaction,
-  getAllExpenses,
-  createExpenses,
+  createExpense,
   createIncome,
+  getTransactions,
 };

@@ -14,6 +14,12 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    transactions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "transaction",
+      },
+    ],
     accessToken: {
       type: String,
       default: null,
