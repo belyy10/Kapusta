@@ -8,13 +8,15 @@ const { email: srvc } = require("../../services");
 async function register(req, res, next) {
   const { email, password } = req.body;
 
-  const salt = await bcrypt.genSalt();
-  const hasedPwd = await bcrypt.hash(password, salt);
   try {
     const { error } = registerUserSchema.validate(req.body);
     if (error) {
-      return next(BadRequest("Missing required field"));
+      return next(BadRequest(error.message));
     }
+
+    const salt = await bcrypt.genSalt();
+    const hasedPwd = await bcrypt.hash(password, salt);
+
     const verificationToken = nanoid();
     const savedUser = await Users.create({
       email,
@@ -33,7 +35,6 @@ async function register(req, res, next) {
       user: {
         email: savedUser.email,
         password: hasedPwd,
-        verificationToken: savedUser.verificationToken,
       },
     });
   } catch (error) {
