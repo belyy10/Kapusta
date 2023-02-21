@@ -254,7 +254,7 @@
 
 
     "/api/users/balances": {
-      "post": {
+      "patch": {
         "tags": ["Auth"],
         "summary": "User balance update",
         "requestBody": {
