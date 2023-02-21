@@ -7,60 +7,58 @@ const { incomesByMonthYear } = require('./agregationTransactions/incomesByMonthY
 
 // getting all expenses
 async function getAllExpenses(req, res, next) {
+  const usersId = req.user;
+  const expenses = await listExpenses(usersId);
 
-    const usersId = req.user;
-    const expenses = await listExpenses(usersId);
-
-    res.json({
-        status: 'success',
-        code: 200,
-        data: {
-            ...expenses
-        }
-    });
+  res.json({
+    status: "success",
+    code: 200,
+    data: {
+      ...expenses,
+    },
+  });
 }
 // add a new expenses
 async function createExpenses(req, res, next) {
-    const userId = req.user._id;
-    const balance = req.user.balance;
-    const expenses = await addExpenses({
-        ...req.body,
-        owner: userId
-    });
-    // find user and update balance when creating a new expenses
-    await Users.findByIdAndUpdate(userId, {balance: balance - req.body.sum});
+  const userId = req.user._id;
+  const balance = req.user.balance;
+  const expenses = await addExpenses({
+    ...req.body,
+    owner: userId,
+  });
+  // find user and update balance when creating a new expenses
+  await Users.findByIdAndUpdate(userId, { balance: balance - req.body.sum });
 
-    res.status(201).json({
-        tatus: 'success',
-        code: 202,
-        data: {
-            expenses,
-            balance: balance - req.body.sum,
-        }
-    });
-};
+  res.status(201).json({
+    status: "success",
+    code: 201,
+    data: {
+      expenses,
+      balance: balance - req.body.sum,
+    },
+  });
+}
 
 // add a new Income
 async function createIncome(req, res, next) {
+  const userId = req.user._id;
+  const balance = req.user.balance;
+  const incomes = await addIncome({
+    ...req.body,
+    owner: userId,
+  });
+  // find user and update balance when add new Income
+  await Users.findByIdAndUpdate(userId, { balance: balance + req.body.sum });
 
-    const userId = req.user._id;
-    const balance = req.user.balance;
-    const incomes = await addIncome({
-        ...req.body,
-        owner: userId
-    }); 
-    // find user and update balance when add new Income
-    await Users.findByIdAndUpdate(userId, {balance: balance + req.body.sum});
-
-    res.status(201).json({
-        status: 'success',
-        code: 202,
-        data: {
-            incomes,
-            balance: balance + req.body.sum,
-        }
-    });
-};
+  res.status(201).json({
+    status: "success",
+    code: 201,
+    data: {
+      incomes,
+      balance: balance + req.body.sum,
+    },
+  });
+}
 // delete transaction
 async function deleteTransaction(req, res, next) {
   const { id } = req.params;
@@ -77,6 +75,8 @@ module.exports = {
   getAllExpenses,
   createExpenses,
   createIncome,
+
   expensesByMonthYear,
   incomesByMonthYear,
+
 };

@@ -9,14 +9,18 @@ const getAccessToken = async (req, res, next) => {
     const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
       expiresIn: "1d",
     });
+    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "30d",
+    });
 
     await Users.findByIdAndUpdate(
       { _id: user._id },
-      { accessToken: accessToken }
+      { accessToken: accessToken, refreshToken: refreshToken }
     );
 
     res.status(200).json({
       accessToken: accessToken,
+      refreshToken: refreshToken,
     });
   } catch (error) {
     next(error);
