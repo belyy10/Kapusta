@@ -2,6 +2,8 @@ const { HttpError } = require("../helpers/index.js");
 const { Users } = require("../models/modelUser.js");
 const { Transaction, addIncome } = require("../models/transaction");
 const { listExpenses, addExpenses } = require("../models/transaction");
+const { expensesByMonthYear } = require('./agregationTransactions/expensesByMonthYear');
+const { incomesByMonthYear } = require('./agregationTransactions/incomesByMonthYear');
 
 // getting all expenses
 async function getAllExpenses(req, res, next) {
@@ -74,5 +76,7 @@ module.exports = {
   deleteTransaction,
   getAllExpenses,
   createExpenses,
-  createIncome
+  createIncome,
+  expensesByMonthYear,
+  incomesByMonthYear,
 };
