@@ -17,6 +17,10 @@ const login = async (req, res, next) => {
     const user = await Users.findOne({ email }).exec();
     const isComparePassword = await bcrypt.compare(password, user.password);
 
+    if (!user.verify) {
+      return next(BadRequest("Please confirm your email"));
+    }
+
     if (!isComparePassword) {
       return next(Unauthorized("email or passwor is not valid"));
     }
