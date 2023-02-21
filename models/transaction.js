@@ -26,6 +26,14 @@ const schema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "user",
     },
+    month: {
+      type: Number,
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    }
   },
   {
     versionKey: false,
