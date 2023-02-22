@@ -15,14 +15,15 @@ const {
 const { tryCatchWrapper } = require("../../helpers/index");
 const { validateBody } = require("../../middlewares/validateBody");
 const {
-  addTransactionsSchema,
+  addTransactionsExpensesSchema,
+  addTransactionsIncomesSchema,
 } = require("../../schema/Joi/transactionsSchema");
-const { expensesByMonthYear } = reuqire(
-  "../../controllers/agregationTransactions/expensesByMonthYear.js"
-);
-const { incomesByMonthYear } = reuqire(
-  "../../controllers/agregationTransactions/incomesByMonthYear.js"
-);
+const {
+  expensesByMonthYear,
+} = require("../../controllers/agregationTransactions/expensesByMonthYear.js");
+const {
+  incomesByMonthYear,
+} = require("../../controllers/agregationTransactions/incomesByMonthYear.js");
 
 const router = express.Router();
 
@@ -31,13 +32,15 @@ router.delete("/:id", tryCatchWrapper(deleteTransaction));
 router.post(
   "/expenses",
   auth,
-  validateBody(addTransactionsSchema),
+  validateBody(addTransactionsExpensesSchema, {
+    context: { route: "expenses" },
+  }),
   createExpense
 );
 router.post(
   "/incomes",
   auth,
-  validateBody(addTransactionsSchema),
+  validateBody(addTransactionsIncomesSchema, { context: { route: "incomes" } }),
   createIncome
 );
 router.get("/", auth, getTransactions);

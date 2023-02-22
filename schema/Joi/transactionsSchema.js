@@ -1,12 +1,23 @@
 const Joi = require("joi");
 
-const addTransactionsSchema = Joi.object({
+const addTransactionsIncomesSchema = Joi.object({
   category: Joi.string().required(),
   description: Joi.string().required(),
   sum: Joi.number().required(),
-  type: Joi.string().valid("expenses", "incomes").required(),
+  type: Joi.string().valid("incomes").required(),
+  month: Joi.number().integer().max(12).min(1).required(),
+  year: Joi.number().integer().max(2023).min(2020).required(),
 });
 
+const addTransactionsExpensesSchema = Joi.object({
+  category: Joi.string().required(),
+  description: Joi.string().required(),
+  sum: Joi.number().required(),
+  type: Joi.string().valid("expenses").required(),
+  month: Joi.number().integer().max(12).min(1).required(),
+  year: Joi.number().integer().max(2023).min(2020).required(),
+});
 module.exports = {
-  addTransactionsSchema,
+  addTransactionsIncomesSchema,
+  addTransactionsExpensesSchema,
 };
