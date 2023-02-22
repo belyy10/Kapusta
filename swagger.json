@@ -1,0 +1,733 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "Kapusta documentation",
+    "description": "Team 6 project documentation",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "servers": [{ "url": "http://localhost:3000" }],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+
+    {
+      "name":"Transactions",
+      "description": "User transaction endpoints"
+    }
+  ],
+  "paths": {
+    "/api/users/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Registration",
+        "parameters": [],
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body or missing required field)",
+            "content": {}
+          },
+          "409": {
+            "description": "Email already in use",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/users/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Verification by token",
+        "parameters": [{
+          "in": "path",
+          "name": "verificationToken",
+          "required":true,
+          "type":"string",
+          "description":"User's verification token"
+        }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          },
+
+          "400":{
+            "description": "Bad request (token invalid)",
+            "content": {}
+          },
+
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/users/verify": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Email verification",
+        "requestBody": {
+          "description": "Verify email object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserEmailVerificationRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Verification email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEmailVerificationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          },
+
+          "400":{
+            "description": "Missing required field email",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/users/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User loginization",
+        "requestBody": {
+          "description": "Login object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Successful login operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required field",
+            "content": {}
+          },
+
+          "401": {
+            "description": "Email or passwor is not valid",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/users/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "security": [{"Bearer": []}],
+        "responses": {
+          "201": {
+            "description": "Successful logout operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLogoutResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not valid",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/users/current": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Current user",
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Successful found current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description":"Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/users/get-access-token": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Access token",
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Successfully took access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+
+    "/api/users/balances": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "User balance update",
+        "requestBody": {
+          "description": "Balance object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNewBalanceRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Balance successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNewBalanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required field",
+            "content": {}
+          },
+
+          "401": {
+            "description": "Not authorized",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/api/transaction":{
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "All expenses",
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Successfully found list of expenses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllExpensesResponse"
+                }
+              }
+            }
+          },
+        
+          "401":{
+            "description": "Not authorized",
+            "content": {}
+          }
+
+        }
+      },
+      "post":{
+        "tags": ["Transactions"],
+        "summary": "Add expenses",
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "Expense object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExpenseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Expense successfully added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddExpensesResponse"
+                }
+              }
+            }
+          },
+
+          "401":{
+            "description": "Not authorized",
+            "content": {}
+          }
+
+        }
+      },
+
+      "patch":{
+        "tags": ["Transactions"],
+        "summary": "Create income",
+        "security": [{"Bearer": []}],
+
+        "requestBody": {
+          "description": "Expense object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExpenseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Income successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddExpensesResponse"
+                }
+              }
+            }
+          },
+
+          "401":{
+            "description": "Not authorized",
+            "content": {}
+          }
+
+        }
+      }
+    },
+
+    "/api/transaction/{id}":{
+      "delete": {
+        "tags": ["Transactions"],
+        "summary": "Delete expenses by id",
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "required":true,
+          "type":"string",
+          "description":"User's verification token"
+        }],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Successfully found list of expenses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllExpensesResponse"
+                }
+              }
+            }
+          },
+
+          "400": {
+            "description": "No such transaction",
+            "content": {}
+          },
+        
+          "404":{
+            "description": "No such transaction",
+            "content": {}
+          }
+
+        }
+      }
+    }
+
+  },
+  "components": {
+    "schemas": {
+
+      "RegistrationRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password, must be more than 6 symbols",
+            "example": "qwerty123"
+          }
+        }
+      },
+
+
+      "RegistrationResponse": {
+        "type": "object",
+          "properties": {
+            "user":{
+              "type":"object",
+              "description":"Object with email, hashed password and verificationToken"
+            }
+        },
+        "example": {
+          "user":{ 
+            "email": "qwerty@gmail.com",
+            "password": "$2b$10$Ysm3/a46i9g9KOjDeDHJoeplLEcVn1AWzqk6SJqLd9RE6DbA0m4w2",
+            "verificationToken": "yqNJJvsj8_CuUb55H_KLv"
+          }
+        }
+      },
+
+      "VerificationResponse": {
+        "properties":{
+          "message":{
+          "type":"string"
+          }
+        },
+        "example": 
+          { 
+            "message": "Verification successful"
+          } 
+      },
+
+      "UserEmailVerificationRequest":{
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          }
+        }
+      },
+
+      "UserEmailVerificationResponse":{
+        "type": "object",
+        "properties":{
+          "message":{
+            "type":"string"
+          }
+        },
+        "example": 
+          { 
+            "message": "Verification email sent"
+          } 
+      },
+
+      "UserLoginRequest":{
+        "type": "object",
+          "required": ["email", "password"],
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "User's email",
+              "format": "email"
+            },
+            "password": {
+              "type": "string",
+              "description": "User's password",
+              "example": "qwerty123"
+            }
+        }
+      },
+
+      "UserLoginResponse": {
+        "type": "object",
+          "properties": {
+
+              "accessToken":{
+                "type":"string",
+                "description": "accessToken"
+              },
+
+              "refreshToken":{
+                "type":"string",
+                "description": "refreshToken"
+              },
+
+              "user":{
+                "type":"object",
+                "description": "Object with user email"
+              }
+        },
+        "example": {
+          "accessToken": "long and boring string with numbers, letters and points...",
+          "refreshToken": "long and boring string with numbers, letters and points...",
+          "user": { 
+            "email": "qwerty@gmail.com"
+          }
+        }
+      },
+
+      "UserLogoutResponse":{
+        "type": "object",
+        "properties": {
+          "message" : {
+            "type":"string"
+          }
+        },
+        "example": 
+          { 
+            "message": "You are log out"
+          } 
+      },
+
+      "CurrentUserResponse":{
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          }
+        },
+        "example": 
+          { 
+            "email": "qwerty@gmail.com"
+          } 
+      },
+
+
+    "AccessTokenResponse":{
+      "type": "object",
+        "properties":{
+          "accessToken":{
+            "type":"string"
+          }
+        },
+        "example": 
+          { 
+            "accessToken":"long and boring string with numbers, letters and points..."
+          } 
+    },
+
+    "GetAllExpensesResponse": {
+      "type": "object",
+        "properties": {
+            "status": {
+              "type": "string",
+              "description": "Status of user request ",
+              "example": "success"
+            },
+
+            "code": {
+              "type":"integer",
+              "description": "Status code of user request",
+              "example": 200
+            },
+
+            "data": {
+              "type":"object",
+              "description": "Object with data about user expenses"
+            }
+          },
+
+      
+      "example": {
+        "status": "success",
+        "code": 200,
+        "data": {}
+      }
+    },
+
+    "AddExpenseRequest":{
+      "type": "object",
+      "properties": {
+          "data": {
+            "type": "string",
+            "description": "Date when user made this transaction"
+          },
+
+          "category": {
+            "type":"string",
+            "description": "Category of transaction"
+          },
+
+          "description": {
+            "type":"string",
+            "description": "User description about transaction"
+          },
+
+          "sum": {
+            "type":"number",
+            "description": "Amount of user transaction"
+          },
+
+          "type":{
+            "type":"string",
+            "description": "Type of user transaction"
+          }
+        },
+
+    
+    "example": {
+      "data": "Wed Mar 25 2015 02:00:00 GMT+0200 (Східна Європа, стандартний час)",
+      "category": "category",
+      "description": "description",
+      "sum": 234,
+      "type":"type"
+    }
+    },
+
+    "AddExpensesResponse":{
+      "type": "object",
+        "properties": {
+            "status": {
+              "type": "string",
+              "description": "Status of user request",
+              "example": "success"
+            },
+
+            "code": {
+              "type":"integer",
+              "description": "Status code of user request",
+              "example": 200
+            },
+
+            "data": {
+              "type":"object",
+              "description": "Object with user balance"
+            }
+          },
+
+      
+      "example": {
+        "status": "success",
+        "code": 201,
+        "data": {
+          "balance": 6
+        }
+      }
+    },
+
+    "UserNewBalanceRequest":{
+      "type": "object",
+        "properties":{
+          "accessToken":{
+            "type":"number"
+          }
+        },
+        "example": 
+          { 
+            "balance": 234
+          } 
+    },
+
+    "UserNewBalanceResponse":{
+      "type": "object",
+        "properties":{
+          "accessToken":{
+            "type":"string"
+          }
+        },
+        "example": {
+          "status" : "success",
+          "code": 200,
+          "user": {
+              "email": "updateUser.email",
+              "balance": "updateUser.balance"
+            }
+          }
+        }
+    
+
+    },
+    
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
