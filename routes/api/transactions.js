@@ -24,12 +24,16 @@ const {
 const {
   incomesByMonthYear,
 } = require("../../controllers/agregationTransactions/incomesByMonthYear.js");
+const {
+  amountOfExpensesByMonth,
+  expensesByCategoryByMonth,
+  amountOfIncomesByMonth,
+  incomesByCategoryByMonth,
+} = require("../../controllers/agregationTransactions/index.js");
 
 const router = express.Router();
 
 router.delete("/:id", tryCatchWrapper(deleteTransaction));
-
-
 
 router.post(
   "/expenses",
@@ -47,8 +51,12 @@ router.post(
 );
 router.get("/", auth, getTransactions);
 
-router.get('/expensesByMonthYear', auth, expensesByMonthYear);
-router.get('/incomesByMonthYear', auth, incomesByMonthYear);
+router.get("/expensesByMonthYear", auth, expensesByMonthYear);
+router.get("/incomesByMonthYear", auth, incomesByMonthYear);
 
+router.get("/amountOfExpensesByMonth", auth, amountOfExpensesByMonth);
+router.get("/expensesByCategoryByMonth", auth, expensesByCategoryByMonth);
+router.get("/amountOfIncomesByMonth", auth, amountOfIncomesByMonth);
+router.get("/incomesByCategoryByMonth", auth, incomesByCategoryByMonth);
 
 module.exports = router;
