@@ -28,6 +28,8 @@ const router = express.Router();
 
 router.delete("/:id", tryCatchWrapper(deleteTransaction));
 
+
+
 router.post(
   "/expenses",
   auth,
@@ -42,7 +44,8 @@ router.post(
 );
 router.get("/", auth, getTransactions);
 
-router.get("/expensesByMonthYear", auth, expensesByMonthYear);
-router.get("/incomesByMonthYear", auth, incomesByMonthYear);
+router.get('/expensesByMonthYear', auth, expensesByMonthYear);
+router.get('/incomesByMonthYear', auth, incomesByMonthYear);
+
 
 module.exports = router;
