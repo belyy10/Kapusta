@@ -15,7 +15,8 @@ const {
 const { tryCatchWrapper } = require("../../helpers/index");
 const { validateBody } = require("../../middlewares/validateBody");
 const {
-  addTransactionsSchema,
+  addTransactionsExpensesSchema,
+  addTransactionsIncomesSchema,
 } = require("../../schema/Joi/transactionsSchema");
 const {
   expensesByMonthYear,
@@ -33,13 +34,15 @@ router.delete("/:id", tryCatchWrapper(deleteTransaction));
 router.post(
   "/expenses",
   auth,
-  validateBody(addTransactionsSchema),
+  validateBody(addTransactionsExpensesSchema, {
+    context: { route: "expenses" },
+  }),
   createExpense
 );
 router.post(
   "/incomes",
   auth,
-  validateBody(addTransactionsSchema),
+  validateBody(addTransactionsIncomesSchema, { context: { route: "incomes" } }),
   createIncome
 );
 router.get("/", auth, getTransactions);
