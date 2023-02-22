@@ -17,12 +17,12 @@ const { validateBody } = require("../../middlewares/validateBody");
 const {
   addTransactionsSchema,
 } = require("../../schema/Joi/transactionsSchema");
-const { expensesByMonthYear } = reuqire(
-  "../../controllers/agregationTransactions/expensesByMonthYear.js"
-);
-const { incomesByMonthYear } = reuqire(
-  "../../controllers/agregationTransactions/incomesByMonthYear.js"
-);
+const {
+  expensesByMonthYear,
+} = require("../../controllers/agregationTransactions/expensesByMonthYear.js");
+const {
+  incomesByMonthYear,
+} = require("../../controllers/agregationTransactions/incomesByMonthYear.js");
 
 const router = express.Router();
 
