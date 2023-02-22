@@ -8,7 +8,7 @@ const incomesByMonthYear = async (req, res, next) => {
         {
             $match: {
                 owner: _id,
-                type: 'income',
+                type: 'incomes',
                 year: year,
                 month: month,
             },

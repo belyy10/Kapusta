@@ -14,6 +14,6 @@ router.post('/', auth, createExpenses);
 router.patch('/', auth, createIncome);
 
 router.get('/expensesByMonthYear', auth, expensesByMonthYear);
-router.get('./incomesByMonthYear', auth, incomesByMonthYear);
+router.get('/incomesByMonthYear', auth, incomesByMonthYear);
 
 module.exports = router;
