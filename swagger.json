@@ -52,7 +52,7 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body or missing required field)",
+            "description": "Bad request (invalid request body)",
             "content": {}
           },
           "409": {
@@ -70,7 +70,6 @@
         "parameters": [{
           "in": "path",
           "name": "verificationToken",
-          "required":true,
           "type":"string",
           "description":"User's verification token"
         }],
@@ -127,15 +126,12 @@
               }
             }
           },
+
           "404": {
             "description": "Not found",
             "content": {}
-          },
-
-          "400":{
-            "description": "Missing required field email",
-            "content": {}
           }
+
         }
       }
     },
@@ -168,12 +164,12 @@
             }
           },
           "400": {
-            "description": "Missing required field",
+            "description": "BadRequest",
             "content": {}
           },
 
           "401": {
-            "description": "Email or passwor is not valid",
+            "description": "Unauthorized",
             "content": {}
           }
         }
@@ -253,10 +249,12 @@
     },
 
 
-    "/api/users/balances": {
+    "/api/users/balance": {
       "patch": {
         "tags": ["Auth"],
         "summary": "User balance update",
+        "security": [{"Bearer": []}],
+
         "requestBody": {
           "description": "Balance object",
           "required": true,
@@ -281,7 +279,7 @@
             }
           },
           "400": {
-            "description": "Missing required field",
+            "description": "Wrong input or missing required field",
             "content": {}
           },
 
@@ -296,15 +294,25 @@
     "/api/transaction":{
       "get": {
         "tags": ["Transactions"],
-        "summary": "All expenses",
+        "summary": "Get two type of expenses",
         "security": [{"Bearer": []}],
+
+        "parameters":[
+          {
+            "in": "query",
+            "name": "type",
+            "type":"string",
+            "description":"Type of user transactions, could be incomes/expenses"
+          }
+        ],
+
         "responses": {
           "200": {
             "description": "Successfully found list of expenses",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAllExpensesResponse"
+                  "$ref": "#/components/schemas/GetAllTransactionByTypeResponse"
                 }
               }
             }
@@ -313,86 +321,107 @@
           "401":{
             "description": "Not authorized",
             "content": {}
-          }
-
-        }
-      },
-      "post":{
-        "tags": ["Transactions"],
-        "summary": "Add expenses",
-        "security": [{"Bearer": []}],
-        "requestBody": {
-          "description": "Expense object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddExpenseRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Expense successfully added",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddExpensesResponse"
-                }
-              }
-            }
           },
 
-          "401":{
-            "description": "Not authorized",
-            "content": {}
-          }
-
-        }
-      },
-
-      "patch":{
-        "tags": ["Transactions"],
-        "summary": "Create income",
-        "security": [{"Bearer": []}],
-
-        "requestBody": {
-          "description": "Expense object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddExpenseRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Income successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddExpensesResponse"
-                }
-              }
-            }
-          },
-
-          "401":{
-            "description": "Not authorized",
+          "404":{
+            "description": "Not found",
             "content": {}
           }
 
         }
       }
+
     },
 
+    "/api/transaction/incomes":{
+    "post":{
+      "tags": ["Transactions"],
+      "summary": "Create income",
+      "security": [{"Bearer": []}],
+
+      "requestBody": {
+        "description": "Expense object",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AddExpenseRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Income successfully created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExpensesResponse"
+              }
+            }
+          }
+        },
+
+        "400":{
+          "description": "Bad Request",
+          "content": {}
+        },
+
+        "401":{
+          "description": "Not authorized",
+          "content": {}
+        }
+
+      }
+    }
+  },
+
+    "/api/transaction/expenses":{
+    "post":{
+      "tags": ["Transactions"],
+      "summary": "Add expenses",
+      "security": [{"Bearer": []}],
+      "requestBody": {
+        "description": "Expense object",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AddExpenseRequest"
+            }
+          }
+        }
+      },
+
+      "responses": {
+        "201": {
+          "description": "Expense successfully added",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExpensesResponse"
+              }
+            }
+          }
+        },
+
+        "400":{
+          "description": "Bad Request",
+          "content": {}
+        },
+
+        "401":{
+          "description": "Not authorized",
+          "content": {}
+        }
+
+      }
+    }
+  },
     "/api/transaction/{id}":{
       "delete": {
         "tags": ["Transactions"],
-        "summary": "Delete expenses by id",
+        "summary": "Delete transaction by id",
         "parameters": [{
           "in": "path",
           "name": "id",
@@ -407,19 +436,190 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAllExpensesResponse"
+                  "$ref": "#/components/schemas/GetDeletedTransactionResponse"
                 }
               }
             }
           },
 
-          "400": {
-            "description": "No such transaction",
-            "content": {}
-          },
         
           "404":{
             "description": "No such transaction",
+            "content": {}
+          }
+
+        }
+      }
+    },
+
+    "/api/transaction/expensesByMonthYear":{
+      "get":{
+        "tags": ["Transactions"],
+        "summary": "Find all expences per some month and year",
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "Expense period info object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpensesByMonthYearRequest"
+              }
+            }
+          }
+        },
+  
+        "responses": {
+          "201": {
+            "description": "Expenses successfully found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpensesByMonthYearResponse"
+                }
+              }
+            }
+          },
+  
+          "400":{
+            "description": "Bad Request",
+            "content": {}
+          },
+  
+          "401":{
+            "description": "Not authorized",
+            "content": {}
+          }
+
+  
+        }
+      }
+    },
+
+
+    "/api/transaction/incomesByMonthYear":{
+      "get":{
+        "tags": ["Transactions"],
+        "summary": "Find all incomes per some month and year",
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "Incomes period info object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomesByMonthYearRequest"
+              }
+            }
+          }
+        },
+  
+        "responses": {
+          "201": {
+            "description": "Incomes successfully found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncomesByMonthYearResponse"
+                }
+              }
+            }
+          },
+  
+          "400":{
+            "description": "Bad Request",
+            "content": {}
+          },
+  
+          "401":{
+            "description": "Not authorized",
+            "content": {}
+          }
+
+  
+        }
+      }
+    },
+
+    "/api/transaction/incomesByCategoryByMonth":{
+      "get":{
+        "tags": ["Transactions"],
+        "summary": "Find all incomes by category per some month and year",
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "Incomes amount and period info object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomesByMonthYearRequest"
+              }
+            }
+          }
+        },
+  
+        "responses": {
+          "201": {
+            "description": "Incomes successfully found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncomesByCategoryByMonthResponse"
+                }
+              }
+            }
+          },
+  
+          "400":{
+            "description": "Bad Request",
+            "content": {}
+          },
+  
+          "401":{
+            "description": "Not authorized",
+            "content": {}
+          }
+
+        }
+      }
+    },
+
+    "/api/transaction/expensesByCategoryByMonth":{
+      "get":{
+        "tags": ["Transactions"],
+        "summary": "Find all expenses by category per some month and year",
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "Incomes amount and period info object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomesByMonthYearRequest"
+              }
+            }
+          }
+        },
+  
+        "responses": {
+          "201": {
+            "description": "Expenses successfully found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpensesByCategoryByMonthResponse"
+                }
+              }
+            }
+          },
+  
+          "400":{
+            "description": "Bad Request",
+            "content": {}
+          },
+  
+          "401":{
+            "description": "Not authorized",
             "content": {}
           }
 
@@ -460,8 +660,7 @@
         "example": {
           "user":{ 
             "email": "qwerty@gmail.com",
-            "password": "$2b$10$Ysm3/a46i9g9KOjDeDHJoeplLEcVn1AWzqk6SJqLd9RE6DbA0m4w2",
-            "verificationToken": "yqNJJvsj8_CuUb55H_KLv"
+            "password": "$2b$10$Ysm3/a46i9g9KOjDeDHJoeplLEcVn1AWzqk6SJqLd9RE6DbA0m4w2"
           }
         }
       },
@@ -586,7 +785,8 @@
         },
         "example": 
           { 
-            "accessToken":"long and boring string with numbers, letters and points..."
+            "accessToken":"long and boring string with numbers, letters and points...",
+            "refreshToken": "long and boring string with numbers, letters and points..."
           } 
     },
 
@@ -629,7 +829,7 @@
 
           "category": {
             "type":"string",
-            "description": "Category of transaction"
+            "description": "Category of transaction, must be one of [expenses, incomes]"
           },
 
           "description": {
@@ -645,17 +845,29 @@
           "type":{
             "type":"string",
             "description": "Type of user transaction"
+          },
+
+          "month":{
+            "type": "integer",
+            "description": "Month when you made expense"
+          },
+
+          "year":{
+            "type":"integer",
+            "description": "Year when you made expense"
           }
         },
 
     
     "example": {
-      "data": "Wed Mar 25 2015 02:00:00 GMT+0200 (Східна Європа, стандартний час)",
       "category": "category",
       "description": "description",
       "sum": 234,
-      "type":"type"
-    }
+      "type": "incomes",
+      "day": 2,
+      "month":2,
+      "year": 2023
+      }
     },
 
     "AddExpensesResponse":{
@@ -670,12 +882,17 @@
             "code": {
               "type":"integer",
               "description": "Status code of user request",
-              "example": 200
+              "example": 201
             },
 
             "data": {
               "type":"object",
-              "description": "Object with user balance"
+              "description": "Object with user balance and inforrmation about user expenses"
+            },
+
+            "expenses":{
+              "type": "object",
+              "description": "All info about expenses"
             }
           },
 
@@ -684,9 +901,73 @@
         "status": "success",
         "code": 201,
         "data": {
-          "balance": 6
+            "expenses": {
+                "category": "category",
+                "description": "description",
+                "sum": 234,
+                "type": "incomes",
+                "owner": "63f5202cc395e62b6abda7f7",
+                "month": 2,
+                "year": 2,
+                "_id": "63f629a4f9c106fc6679d6e9",
+                "date": "2023-02-22T14:41:40.395Z",
+                "createdAt": "2023-02-22T14:41:40.401Z",
+                "updatedAt": "2023-02-22T14:41:40.401Z"
+            },
+
+            "balance": 702
+          }
         }
-      }
+    },
+
+    "AddIncomesResponse":{
+      "type": "object",
+        "properties": {
+            "status": {
+              "type": "string",
+              "description": "Status of user request",
+              "example": "success"
+            },
+
+            "code": {
+              "type":"integer",
+              "description": "Status code of user request",
+              "example": 201
+            },
+
+            "data": {
+              "type":"object",
+              "description": "Object with user balance and inforrmation about user expenses"
+            },
+
+            "incomes":{
+              "type": "object",
+              "description": "All info about incomes"
+            }
+          },
+
+      
+      "example": {
+        "status": "success",
+        "code": 201,
+        "data": {
+            "incomes": {
+                "category": "category",
+                "description": "description",
+                "sum": 234,
+                "type": "incomes",
+                "owner": "63f5202cc395e62b6abda7f7",
+                "month": 2,
+                "year": 2,
+                "_id": "63f629a4f9c106fc6679d6e9",
+                "date": "2023-02-22T14:41:40.395Z",
+                "createdAt": "2023-02-22T14:41:40.401Z",
+                "updatedAt": "2023-02-22T14:41:40.401Z"
+            },
+
+            "balance": 702
+          }
+        }
     },
 
     "UserNewBalanceRequest":{
@@ -713,14 +994,195 @@
           "status" : "success",
           "code": 200,
           "user": {
-              "email": "updateUser.email",
-              "balance": "updateUser.balance"
+              "email": "qwerty@gmail.com",
+              "balance": 23424
             }
           }
-        }
-    
+        },
 
+      "GetAllTransactionByTypeResponse":{
+        "type":"object",
+        "example": {
+          
+            "transactions": [
+              {
+                "_id": "63f622891d7c700d2dbd8188",
+                "category": "category",
+                "description": "description",
+                "sum": 234,
+                "type": "incomes",
+                "owner": "63f5202cc395e62b6abda7f7",
+                "date": "2023-02-22T14:11:21.653Z",
+                "createdAt": "2023-02-22T14:11:21.660Z",
+                "updatedAt": "2023-02-22T14:11:21.660Z"
+              },
+              {
+                "_id": "63f629a4f9c106fc6679d6e9",
+                "category": "category",
+                "description": "description",
+                "sum": 234,
+                "type": "incomes",
+                "owner": "63f5202cc395e62b6abda7f7",
+                "month": 2,
+                "year": 2,
+                "date": "2023-02-22T14:41:40.395Z",
+                "createdAt": "2023-02-22T14:41:40.401Z",
+                "updatedAt": "2023-02-22T14:41:40.401Z"
+              }
+            ]
+          }
+      },
+
+      "GetDeletedTransactionResponse":{
+        "type": "object",
+        
+        "example": {
+          "_id": "63f629a4f9c106fc6679d6e9",
+          "category": "category",
+          "description": "description",
+          "sum": 234,
+          "type": "incomes",
+          "owner": "63f5202cc395e62b6abda7f7",
+          "month": 2,
+          "year": 2,
+          "date": "2023-02-22T14:41:40.395Z",
+          "createdAt": "2023-02-22T14:41:40.401Z",
+          "updatedAt": "2023-02-22T14:41:40.401Z"
+        }
+      },
+
+      "ExpensesByMonthYearRequest":{
+        "type": "object",
+          "properties":{
+            "month":{
+              "type":"integer",
+              "description": "Number of month (1 - 12)"
+            },
+            "year":{
+              "type":"integer",
+              "description": "Number of year (2020 - 2023)"
+            }
+            
+            
+          },
+          "example": 
+            { 
+              "month":2,
+              "year": 2023
+            } 
+      },
+  
+      "ExpensesByMonthYearResponse":{
+        "type":"array",
+          "properties":{
+            "expenses":{
+              "type": "number",
+              "description": "Total amount expenses per this period in object"
+            }
+          },
+          "example": 
+          [
+            {
+              "expenses": 468
+            }
+          ]
+      },
+
+      "IncomesByMonthYearRequest":{
+        "type": "object",
+          "properties":{
+            "month":{
+              "type":"integer",
+              "description": "Number of month (1 - 12)"
+            },
+            "year":{
+              "type":"integer",
+              "description": "Number of year (2020 - 2023)"
+            }
+            
+          },
+          "example": 
+            { 
+              "month":2,
+              "year": 2023
+            } 
+      },
+
+      "IncomesByMonthYearResponse":{
+        "type":"array",
+          "properties":{
+            "income":{
+              "type": "number",
+              "description": "Total amount expenses per this period in object"
+            }
+          },
+          "example": 
+          [
+            {
+              "income": 468
+            }
+          ]
+      },
+
+
+      "ExpensesByCategoryByMonthResponse":{
+        "type":"array",
+          "properties":{
+            "income":{
+              "type": "number",
+              "description": "Total amount of expense by this category per this period in object"
+            },
+
+            
+            "_id":{
+              "type": "string",
+              "description": "Type of expense per this period in object"
+            }
+          },
+          "example": 
+          [
+            {
+              "_id": "category",
+              "income": 468
+            },
+
+            {
+              "_id": "category",
+              "expenses": 468
+          }
+          ]
+      },
+
+
+      "IncomesByCategoryByMonthResponse":{
+        "type":"array",
+          "properties":{
+            "income":{
+              "type": "number",
+              "description": "Total amount of incomes by category per this period in object"
+            },
+
+            "_id":{
+              "type": "string",
+              "description": "Type of income per this period in object"
+            }
+          },
+          "example": 
+          [
+            {
+                "_id": "category",
+                "incomes": 1404
+            },
+            {
+                "_id": "meal",
+                "incomes": 234
+            }
+        ]
+      }
     },
+
+
+    
     
     "securitySchemes": {
       "Bearer": {
