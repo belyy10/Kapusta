@@ -1,17 +1,25 @@
 const { Users } = require("../../models/modelUser.js");
 const { Transaction } = require("../../models/transaction");
 
-async function createIncome(req, res, next) {
+async function createTransaction(req, res, next) {
   const userId = req.user._id;
   const balance = req.user.balance;
-  const incomes = await Transaction.create({
+  const isExpense = req.path.includes("expenses");
+
+  const transactionData = {
     ...req.body,
     owner: userId,
-  });
+  };
+
+  if (isExpense) {
+    transactionData.sum = -transactionData.sum;
+  }
+
+  const transaction = await Transaction.create(transactionData);
 
   const updatedUser = await Users.findByIdAndUpdate(
     userId,
-    { balance: balance + req.body.sum },
+    { balance: balance + transactionData.sum },
     { new: true }
   );
 
@@ -19,12 +27,10 @@ async function createIncome(req, res, next) {
     status: "success",
     code: 201,
     data: {
-      incomes,
+      transaction,
       balance: updatedUser.balance,
     },
   });
 }
 
-module.exports = {
-  createIncome,
-};
+module.exports = { createTransaction };

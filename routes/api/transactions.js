@@ -1,10 +1,6 @@
 const express = require("express");
 
 const {
-  createExpense,
-} = require("../../controllers/transactions/createExpense");
-const { createIncome } = require("../../controllers/transactions/createIncome");
-const {
   deleteTransaction,
 } = require("../../controllers/transactions/deleteTransaction");
 const auth = require("../../middlewares/auth");
@@ -25,11 +21,13 @@ const {
   incomesByMonthYear,
 } = require("../../controllers/agregationTransactions/incomesByMonthYear.js");
 const {
-  amountOfExpensesByMonth,
   expensesByCategoryByMonth,
-  amountOfIncomesByMonth,
   incomesByCategoryByMonth,
 } = require("../../controllers/agregationTransactions/index.js");
+
+const {
+  createTransaction,
+} = require("../../controllers/transactions/createTransaction");
 
 const router = express.Router();
 
@@ -41,13 +39,14 @@ router.post(
   validateBody(addTransactionsExpensesSchema, {
     context: { route: "expenses" },
   }),
-  createExpense
+  createTransaction
 );
+
 router.post(
   "/incomes",
   auth,
   validateBody(addTransactionsIncomesSchema, { context: { route: "incomes" } }),
-  createIncome
+  createTransaction
 );
 router.get("/", auth, getTransactions);
 
