@@ -31,14 +31,14 @@ async function googleRedirect(req, res, next) {
       },
     });
 
-    const { email, name, picture, id } = userData.data;
+    const { email, name, id } = userData.data;
 
     const user = await Users.findByEmail(email);
 
     if (!user) {
       const newUser = await Users.create({ email, name, password: id });
       const idUser = newUser.id;
-      await Users.updateGoogleUser(idUser, picture);
+      await Users.updateGoogleUser(idUser);
 
       const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
         expiresIn: "1d",
