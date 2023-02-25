@@ -2,6 +2,7 @@ const { Users } = require("../../models/modelUser");
 const { BadRequest } = require("http-errors");
 const { verifyUserSchema } = require("../../middlewares/validation");
 const { email: srvc } = require("./sendEmail");
+const { BASE_URL } = process.env;
 
 async function verifyRepeated(req, res, next) {
   const { email } = req.body;
@@ -21,7 +22,7 @@ async function verifyRepeated(req, res, next) {
   const mail = {
     to: email,
     subject: "Confirm email",
-    html: `<a target="_blanc" href='http://localhost:3000/api/users/verify/${user.verificationToken}'>Confirm email</a>`,
+    html: `<a target="_blanc" href='${BASE_URL}/users/verify/${user.verificationToken}'>Confirm email</a>`,
   };
   await srvc.sendEmail(mail);
   res.status(200).json({ message: "Verification email sent" });

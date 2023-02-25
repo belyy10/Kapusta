@@ -1,14 +1,13 @@
 const { Users } = require("../../models/modelUser");
 const { loginUserSchema } = require("../../schema/Joi/loginUserSchema");
 const { BadRequest, Unauthorized } = require("http-errors");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { tokensCreate } = require("../../helpers");
 
 const login = async (req, res, next) => {
   try {
     const { error } = loginUserSchema.validate(req.body);
     const { email, password } = req.body;
-    const { JWT_CODE } = process.env;
 
     if (error) {
       return next(BadRequest("Wrong input or missing required field"));
@@ -25,12 +24,7 @@ const login = async (req, res, next) => {
       return next(Unauthorized("email or passwor is not valid"));
     }
 
-    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "1d",
-    });
-    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "30d",
-    });
+    const { accessToken, refreshToken } = tokensCreate(user._id);
 
     await Users.findByIdAndUpdate(
       { _id: user._id },

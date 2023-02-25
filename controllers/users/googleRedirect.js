@@ -2,9 +2,14 @@ const queryString = require("query-string");
 const axios = require("axios");
 const { Users } = require("../../models/modelUser");
 const jwt = require("jsonwebtoken");
-const { JWT_CODE } = process.env;
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, FRONTEND_URL } =
-  process.env;
+const { tokensCreate } = require("../../helpers");
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  BASE_URL,
+  FRONTEND_URL,
+  JWT_CODE,
+} = process.env;
 
 async function googleRedirect(req, res, next) {
   try {
@@ -31,42 +36,26 @@ async function googleRedirect(req, res, next) {
       },
     });
 
-    const { email, name, id } = userData.data;
+    const { email } = userData.data;
 
-    const user = await Users.findByEmail(email);
+    const user = await Users.findByEmail({ email });
 
     if (!user) {
-      const newUser = await Users.create({ email, name, password: id });
-      const idUser = newUser.id;
-      await Users.updateGoogleUser(idUser);
+      await Users.create({
+        email,
+      });
 
-      const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
-        expiresIn: "1d",
-      });
-      const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
-        expiresIn: "30d",
-      });
+      const { accessToken, refreshToken } = tokensCreate(user._id);
+
       await Users.findByIdAndUpdate(
         { _id: user._id },
         { accessToken: accessToken, refreshToken: refreshToken }
       );
 
       return res.redirect(
-        `${FRONTEND_URL}?token=${accessToken}&refreshToken=${refreshToken}`
+        `${FRONTEND_URL}?token=${accessToken}&refreshToken=${refreshToken}&email=${email}`
       );
     }
-    const idUser = user.id;
-    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "1d",
-    });
-    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "30d",
-    });
-    await Users.updateToken(idUser, accessToken, refreshToken);
-
-    return res.redirect(
-      `${FRONTEND_URL}?token=${accessToken}&refreshToken=${refreshToken}`
-    );
   } catch (error) {
     next(error);
   }
