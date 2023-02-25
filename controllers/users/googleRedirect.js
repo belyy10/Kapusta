@@ -47,7 +47,7 @@ async function googleRedirect(req, res, next) {
       );
 
       return res.redirect(
-        `${FRONTEND_URL}?token=${accessToken}&refreshToken=${refreshToken}&email=${email}`
+        `${FRONTEND_URL}/google-redirect?token=${accessToken}&refreshToken=${refreshToken}&email=${email}`
       );
     }
   } catch (error) {
