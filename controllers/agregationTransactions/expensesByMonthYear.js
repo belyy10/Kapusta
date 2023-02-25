@@ -1,58 +1,34 @@
 const { Transaction } = require('../../models/transaction');
-const { BadRequest} = require("http-errors");
-// const moment = require('moment');
+const { BadRequest } = require("http-errors");
+const { HttpError } = require('../../helpers');
 
 const expensesByMonthYear = async (req, res, next) => {
     const { _id } = req.user;
-    const { month, year } = req.body;
-    console.log(_id);
+    if (!req.user) return next(HttpError(404, "User not found"));
 
-    if(month && year){
+    try {
         const expensesAgregate = await Transaction.aggregate([
             {
                 $match: {
                     owner: _id,
                     type: 'expenses',
-                    year: year,
-                    month: month,
                 },
             },
             {
                 $group: {
-                    _id: null,
-                    // _id: {
-                    //     '$dateToString': {
-                    //         'format': "%Y-%m-%d",
-                    //         'date': 'date'
-                    //     }
-                        // year: { moment.get.(date)},
-                        // month: '01',
-                    // },
+                    _id: {$dateToString:{format: "%Y-%m", date: '$date'}},
                     expenses: { $sum: '$sum' },
-                    // month,
-                    // year,
-                    //   month: {$month: 'date'},
                 }
             },
             {
-                $project: {  
-                _id: 0,
-                // day: { $dateToString: { format: '%Y', date: '$date'}},
-                expenses: '$expenses'
-                    // month: {$month: {date: Date('date')}}
-                    // yearMonthDayUTC: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
-                    // monthOffset: { $dateToString: { format: '%m', date: '$date' } },
-                },
+                $sort:{_id: -1},
             },
-        
         ]);
-    console.log('return', expensesAgregate)
-        //  return res.status(200).json(dateM);
+
         return res.status(200).json(expensesAgregate);
-    }else{
+    } catch {
         return next((BadRequest("Bad Request")))
     }
-    
 }
 
 module.exports = { expensesByMonthYear };
