@@ -1,9 +1,10 @@
 const queryString = require("query-string");
 const axios = require("axios");
 const { Users } = require("../../models/modelUser");
-const { tokensCreate } = require("../../helpers");
+const jwt = require("jsonwebtoken");
 const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
+const { JWT_CODE } = process.env;
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, FRONTEND_URL } =
   process.env;
@@ -46,7 +47,12 @@ async function googleRedirect(req, res, next) {
       await Users.create({ email, password: hashedPassword });
     }
 
-    const { accessToken, refreshToken } = tokensCreate(user._id);
+    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "1d",
+    });
+    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "30d",
+    });
 
     await Users.findByIdAndUpdate(
       { _id: user._id },
