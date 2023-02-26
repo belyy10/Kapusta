@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema(
       type: String,
       default: null,
     },
-    refrechToken: {
+    refreshToken: {
       type: String,
       default: null,
     },
