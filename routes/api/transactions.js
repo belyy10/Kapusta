@@ -14,15 +14,11 @@ const {
   addTransactionsExpensesSchema,
   addTransactionsIncomesSchema,
 } = require("../../schema/Joi/transactionsSchema");
+
 const {
   expensesByMonthYear,
-} = require("../../controllers/agregationTransactions/expensesByMonthYear.js");
-const {
   incomesByMonthYear,
-} = require("../../controllers/agregationTransactions/incomesByMonthYear.js");
-const {
-  expensesByCategoryByMonth,
-  incomesByCategoryByMonth,
+  reportsByCategoryByMonth,
 } = require("../../controllers/agregationTransactions/index.js");
 
 const {
@@ -52,7 +48,7 @@ router.get("/", auth, getTransactions);
 
 router.get("/expensesByMonthYear", auth, expensesByMonthYear);
 router.get("/incomesByMonthYear", auth, incomesByMonthYear);
-router.get("/expensesByCategoryByMonth", auth, expensesByCategoryByMonth);
-router.get("/incomesByCategoryByMonth", auth, incomesByCategoryByMonth);
+router.get("/reportbyexpenses", auth, reportsByCategoryByMonth);
+router.get("/reportbyincomes", auth, reportsByCategoryByMonth);
 
 module.exports = router;

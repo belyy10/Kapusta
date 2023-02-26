@@ -1,15 +1,13 @@
 const { Unauthorized } = require("http-errors");
 const { Users } = require("../../models/modelUser.js");
 const { Transaction } = require("../../models/transaction.js");
-const { BadRequest} = require("http-errors");
+const { BadRequest } = require("http-errors");
 
-
-async function incomesByCategoryByMonth(req, res, next) {
+async function reportsByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
-  const { month, year } = req.body;
+  const { month, year, type } = req.query;
 
-  if(month && year){
-
+  if (month && year && type) {
     const userId = await Users.findById({ _id });
     if (!userId) {
       return next(Unauthorized("Not authorized"));
@@ -22,13 +20,13 @@ async function incomesByCategoryByMonth(req, res, next) {
             owner: _id,
             year: year,
             month: month,
-            type: "incomes",
+            type: type,
           },
         },
         {
           $group: {
             _id: "$category",
-            incomes: { $sum: "$sum" },
+            total: { $sum: "$sum" },
           },
         },
       ]);
@@ -37,8 +35,8 @@ async function incomesByCategoryByMonth(req, res, next) {
       next(error);
     }
   } else {
-    return next((BadRequest("Bad Request")))
+    return next(BadRequest("Bad Request"));
   }
 }
 
-module.exports = { incomesByCategoryByMonth };
+module.exports = { reportsByCategoryByMonth };
