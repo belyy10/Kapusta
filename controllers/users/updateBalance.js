@@ -15,7 +15,7 @@ const updateBalance = async (req, res, next) => {
       if (!updateUser) {
         return Unauthorized();
       }
-  
+
       res.json({
         status: "success",
         code: 200,
@@ -24,11 +24,9 @@ const updateBalance = async (req, res, next) => {
           balance: updateUser.balance,
         },
       });
-    } else{ 
+    } else {
       return next(BadRequest("Wrong input or missing required field"));
     }
-
-    
   } catch (error) {
     next(error);
   }
