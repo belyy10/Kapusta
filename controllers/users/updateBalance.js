@@ -1,5 +1,5 @@
 const { Users } = require("../../models/modelUser");
-const { BadRequest, Unauthorized } = require("http-errors");
+const { BadRequest } = require("http-errors");
 
 const updateBalance = async (req, res, next) => {
   try {
@@ -12,9 +12,9 @@ const updateBalance = async (req, res, next) => {
         { balance },
         { new: true }
       );
-      if (!updateUser) {
-        return Unauthorized();
-      }
+      // if (!updateUser) {
+      //   return Unauthorized();
+      // }
 
       res.json({
         status: "success",
