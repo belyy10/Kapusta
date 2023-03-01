@@ -34,7 +34,7 @@ async function googleRedirect(req, res, next) {
       },
     });
 
-    const { email } = userData;
+    const { email } = userData.data;
 
     const user = await Users.findOne({ email });
 
@@ -43,12 +43,13 @@ async function googleRedirect(req, res, next) {
 
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(createdPassword, salt);
-      const verificationToken = nanoid();
-      const userEmail = userData.data.email;
+
       await Users.create({
-        email: userEmail,
+        email,
         password: hashedPassword,
-        verificationToken,
+        balance: null,
+        verify: true,
+        verificationToken: null,
       });
     }
 
@@ -58,7 +59,6 @@ async function googleRedirect(req, res, next) {
     const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
       expiresIn: "30d",
     });
-
     await Users.findByIdAndUpdate(
       { _id: user._id },
       { accessToken, refreshToken },
