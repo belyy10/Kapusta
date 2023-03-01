@@ -36,7 +36,7 @@ async function googleRedirect(req, res, next) {
 
     const { email } = userData;
 
-    const user = await Users.findByEmail({ email });
+    const user = await Users.findOne({ email });
 
     if (!user) {
       const createdPassword = nanoid();
