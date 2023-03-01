@@ -1,7 +1,9 @@
-const { expensesByCategoryByMonth } = require("./expensesByCategoryByMonth.js");
-const { incomesByCategoryByMonth } = require("./incomesByCategoryByMonth.js");
+const { reportsByCategoryByMonth } = require("./reportsByCategoryByMonth.js");
+const { expensesByMonthYear } = require("./expensesByMonthYear.js");
+const { incomesByMonthYear } = require("./incomesByMonthYear.js");
 
 module.exports = {
-  expensesByCategoryByMonth,
-  incomesByCategoryByMonth,
+  reportsByCategoryByMonth,
+  expensesByMonthYear,
+  incomesByMonthYear,
 };

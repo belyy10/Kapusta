@@ -1,3 +1,6 @@
+const jwt = require("jsonwebtoken");
+const { JWT_CODE } = process.env;
+
 function tryCatchWrapper(enpointFn) {
   return async (req, res, next) => {
     try {
@@ -14,7 +17,19 @@ function HttpError(status, message) {
   return err;
 }
 
+const tokensCreate = (userId) => {
+  const accessToken = jwt.sign({ id: userId }, JWT_CODE, {
+    expiresIn: "1d",
+  });
+  const refreshToken = jwt.sign({ id: userId }, JWT_CODE, {
+    expiresIn: "30d",
+  });
+
+  return { accessToken, refreshToken };
+};
+
 module.exports = {
   tryCatchWrapper,
   HttpError,
+  tokensCreate,
 };

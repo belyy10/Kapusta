@@ -19,6 +19,7 @@ const addTransactionsExpensesSchema = Joi.object({
   month: Joi.number().integer().max(12).min(1).required(),
   year: Joi.number().integer().max(2023).min(2020).required(),
 });
+
 module.exports = {
   addTransactionsIncomesSchema,
   addTransactionsExpensesSchema,

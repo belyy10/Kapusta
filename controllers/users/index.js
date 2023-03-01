@@ -4,6 +4,8 @@ const { logout } = require("./logout");
 const { current } = require("./current");
 const { getAccessToken } = require("./getAccessToken");
 const updateBalance = require("./updateBalance");
+const { googleAuth } = require("./googleAuth");
+const { googleRedirect } = require("./googleRedirect");
 
 module.exports = {
   register,
@@ -12,4 +14,6 @@ module.exports = {
   current,
   getAccessToken,
   updateBalance,
+  googleAuth,
+  googleRedirect,
 };
