@@ -4,7 +4,7 @@ const { Transaction } = require("../../models/transaction.js");
 
 async function expensesByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
-  const { month, year } = req.body;
+  // const { month, year } = req.body;
 
   const userId = await Users.findById({ _id });
   if (!userId) {
@@ -16,8 +16,8 @@ async function expensesByCategoryByMonth(req, res, next) {
       {
         $match: {
           owner: _id,
-          year: year,
-          month: month,
+          // year: year,
+          // month: month,
           type: "expenses",
         },
       },

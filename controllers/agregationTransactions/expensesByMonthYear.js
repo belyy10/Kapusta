@@ -11,13 +11,17 @@ const expensesByMonthYear = async (req, res, next) => {
             {
                 $match: {
                     owner: _id,
-                    type: 'expenses',
                 },
             },
             {
                 $group: {
-                    _id: {$dateToString:{format: "%Y-%m", date: '$date'}},
-                    expenses: { $sum: '$sum' },
+                    _id: {
+                        $dateToString: { format: "%Y-%m", date: '$date' },
+},
+                                                    
+                    expenses: { $sum: { $cond: [{ $eq: ['$type', 'expenses']}, '$sum',0 ]}},
+                    incomes: { $sum: { $cond: [{ $eq: ['$type', 'incomes'] }, '$sum', 0 ]}},
+               
                 }
             },
             {
