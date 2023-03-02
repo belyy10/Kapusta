@@ -35,6 +35,7 @@ async function googleRedirect(req, res, next) {
     });
 
     const { email } = userData.data.email;
+    const { balance } = userData.data.balance;
 
     const user = await Users.findOne({ email });
 
@@ -66,7 +67,7 @@ async function googleRedirect(req, res, next) {
     );
 
     return res.redirect(
-      `${FRONTEND_URL}?token=${accessToken}&refreshToken=${refreshToken}`
+      `${FRONTEND_URL}?email=${email}&refreshToken=${refreshToken}&balance=${balance}`
     );
   } catch (error) {
     next(error);
