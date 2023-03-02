@@ -34,7 +34,7 @@ async function googleRedirect(req, res, next) {
       },
     });
 
-    const { email } = userData.data;
+    const { email } = userData.data.email;
 
     const user = await Users.findOne({ email });
 
@@ -52,7 +52,7 @@ async function googleRedirect(req, res, next) {
         verificationToken: null,
       });
     }
-
+    const storedUser = await Users.findOne({ email });
     const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
       expiresIn: "1d",
     });
@@ -60,7 +60,7 @@ async function googleRedirect(req, res, next) {
       expiresIn: "30d",
     });
     await Users.findByIdAndUpdate(
-      { _id: user._id },
+      storedUser._id,
       { accessToken, refreshToken },
       { new: true }
     );
