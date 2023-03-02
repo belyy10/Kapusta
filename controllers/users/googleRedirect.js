@@ -1,11 +1,6 @@
 const queryString = require("query-string");
 const axios = require("axios");
-const { Users } = require("../../models/modelUser");
-const jwt = require("jsonwebtoken");
-const { nanoid } = require("nanoid");
-const bcrypt = require("bcrypt");
-const { JWT_CODE } = process.env;
-
+const { googleUserLogin } = require("../../services/googleUserLogin");
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, FRONTEND_URL } =
   process.env;
 
@@ -34,39 +29,12 @@ async function googleRedirect(req, res, next) {
       },
     });
 
-    const { email } = userData.data;
-
-    const user = await Users.findOne({ email });
-
-    if (!user) {
-      const createdPassword = nanoid();
-
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(createdPassword, salt);
-
-      await Users.create({
-        email,
-        password: hashedPassword,
-        balance: null,
-        verify: true,
-        verificationToken: null,
-      });
-    }
-
-    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "1d",
-    });
-    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "30d",
-    });
-    await Users.findByIdAndUpdate(
-      { _id: user._id },
-      { accessToken, refreshToken },
-      { new: true }
+    const { email, balance, token } = await googleUserLogin(
+      userData.data.email
     );
 
     return res.redirect(
-      `${FRONTEND_URL}?token=${accessToken}&refreshToken=${refreshToken}`
+      `${FRONTEND_URL}?email=${email}&token=${token}&balance=${balance}`
     );
   } catch (error) {
     next(error);
