@@ -33,6 +33,10 @@ async function register(req, res, next) {
     };
     await srvc.sendEmail(mail);
 
+    if (!savedUser.verify) {
+      next(BadRequest("Please confirm your email"));
+    }
+
     res.status(201).json({
       user: {
         email: savedUser.email,
