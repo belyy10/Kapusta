@@ -12,13 +12,10 @@ const updateBalance = async (req, res, next) => {
         { balance },
         { new: true }
       );
-      // if (!updateUser) {
-      //   return Unauthorized();
-      // }
 
       res.json({
         status: "success",
-        code: 200,
+        code: 201,
         user: {
           email: updateUser.email,
           balance: updateUser.balance,
