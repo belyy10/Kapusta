@@ -7,7 +7,6 @@ async function reportsByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
   const { month, year, type } = req.query;
 
-  if (month && year && type) {
     const userId = await Users.findById({ _id });
     if (!userId) {
       return next(Unauthorized("Not authorized"));
@@ -18,25 +17,37 @@ async function reportsByCategoryByMonth(req, res, next) {
         {
           $match: {
             owner: _id,
-            year: year,
-            month: month,
-            type: type,
+            // year: year,
+            // month: month,
+            // type: type,
           },
         },
         {
           $group: {
-            _id: "$category",
-            total: { $sum: "$sum" },
+            // _id: "$category",
+            // total: { $sum: "$sum" },
+
+            _id: {
+              $dateToString: { format: "%Y-%m", date: '$date' },
+            },
+                                          
+         
           },
+          $group:{
+
+            _id: "$category",
+            expenses: { $sum: { $cond: [{ $eq: ['$type', 'expenses']}, '$sum',0 ]}},
+            incomes: { $sum: { $cond: [{ $eq: ['$type', 'incomes'] }, '$sum', 0 ]}},
+          }
         },
+        {
+          $sort:{_id: -1},
+      },
       ]);
       return res.status(200).json(result);
     } catch (error) {
       next(error);
     }
-  } else {
-    return next(BadRequest("Bad Request"));
-  }
 }
 
 module.exports = { reportsByCategoryByMonth };
