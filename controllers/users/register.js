@@ -37,6 +37,7 @@ async function register(req, res, next) {
       user: {
         email: savedUser.email,
         password: hasedPwd,
+        balance: savedUser.balance,
       },
     });
   } catch (error) {
