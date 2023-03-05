@@ -4,10 +4,14 @@ const { Users } = require("../../models/modelUser");
 const jwt = require("jsonwebtoken");
 const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
-const { JWT_CODE } = process.env;
 
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, FRONTEND_URL } =
-  process.env;
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  BASE_URL,
+  FRONTEND_URL,
+  JWT_CODE,
+} = process.env;
 
 async function googleRedirect(req, res, next) {
   try {
