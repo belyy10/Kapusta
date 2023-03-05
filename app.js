@@ -4,7 +4,6 @@ const cors = require("cors");
 
 const authRouter = require("./routes/api/auth-routes");
 const transactionRouter = require("./routes/api/transactions");
-const googleRouter = require("./routes/api/gooogle-routes");
 
 const app = express();
 
@@ -19,7 +18,6 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", googleRouter);
 app.use("/api/users", authRouter);
 app.use("/api/transaction", transactionRouter);
 

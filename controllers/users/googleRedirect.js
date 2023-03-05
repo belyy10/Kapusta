@@ -25,7 +25,7 @@ async function googleRedirect(req, res, next) {
       data: {
         client_id: GOOGLE_CLIENT_ID,
         client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${BASE_URL}/google-redirect`,
+        redirect_uri: `${BASE_URL}/users/google-redirect`,
         grant_type: "authorization_code",
         code,
       },
