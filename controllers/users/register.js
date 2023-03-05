@@ -33,17 +33,21 @@ async function register(req, res, next) {
     };
     await srvc.sendEmail(mail);
 
-    if (!savedUser.verify) {
-      next(BadRequest("Please confirm your email"));
-    }
+    // if (!savedUser.verify) {
+    //   next(BadRequest("Please confirm your email"));
+    // }
 
-    res.status(201).json({
-      user: {
-        email: savedUser.email,
-        password: hasedPwd,
-        balance: savedUser.balance,
-      },
-    });
+    // res.status(201).json({
+    //   user: {
+    //     email: savedUser.email,
+    //     password: hasedPwd,
+    //     balance: savedUser.balance,
+    //   },
+    // });
+
+    return {
+      message: `Please confirm your email ${savedUser.email}`,
+    };
   } catch (error) {
     if (error.message.includes("E11000 duplicate key error")) {
       return next(Conflict("Email in use"));
