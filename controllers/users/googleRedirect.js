@@ -66,7 +66,7 @@ async function googleRedirect(req, res, next) {
     );
 
     return res.redirect(
-      `https://bugheroes.netlify.app/?&accessToken=${accessToken}`
+      `https://bugheroes.netlify.app/?accessToken=${accessToken}`
     );
   } catch (error) {
     next(error);
