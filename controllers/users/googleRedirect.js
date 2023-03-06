@@ -38,10 +38,9 @@ async function googleRedirect(req, res, next) {
       },
     });
 
-    const { email } = userData.data.email;
-    const { balance } = userData.data.balance;
+    const { email } = userData.data;
 
-    const user = await Users.findOne({ email });
+    let user = await Users.findOne({ email });
 
     if (!user) {
       const createdPassword = nanoid();
@@ -49,7 +48,7 @@ async function googleRedirect(req, res, next) {
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(createdPassword, salt);
 
-      await Users.create({
+      user = await Users.create({
         email,
         password: hashedPassword,
         balance: null,
@@ -66,9 +65,7 @@ async function googleRedirect(req, res, next) {
       { new: true }
     );
 
-    return res.redirect(
-      `${FRONTEND_URL}?email=${email}&accessToken=${accessToken}&balance=${balance}`
-    );
+    return res.redirect(`${FRONTEND_URL}?&accessToken=${accessToken}`);
   } catch (error) {
     next(error);
   }
