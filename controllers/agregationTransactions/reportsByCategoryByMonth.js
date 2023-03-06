@@ -5,7 +5,6 @@ const { BadRequest } = require("http-errors");
 
 async function reportsByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
-  const { month, year, type } = req.query;
 
     const userId = await Users.findById({ _id });
     if (!userId) {
@@ -17,36 +16,42 @@ async function reportsByCategoryByMonth(req, res, next) {
         {
           $match: {
             owner: _id,
-            // year: year,
-            // month: month,
-            // type: type,
           },
         },
         {
           $group: {
-            // _id: "$category",
-            // total: { $sum: "$sum" },
-
-            _id: {
+              _id: {
               $dateToString: { format: "%Y-%m", date: '$date' },
             },
-                                          
-         
           },
-          $group:{
-
-            _id: "$category",
-            expenses: { $sum: { $cond: [{ $eq: ['$type', 'expenses']}, '$sum',0 ]}},
-            incomes: { $sum: { $cond: [{ $eq: ['$type', 'incomes'] }, '$sum', 0 ]}},
-          }
         },
         {
-          $sort:{_id: -1},
+          $project: {
+            _id: _id.date,                                
+              expenses: { 'Products' : {$sum: { $cond: [{ $eq: ['$category', 'Products']}, '$sum',0 ]}},
+                          'Alcohol' : {$sum: { $cond: [{ $eq: ['$category', 'Alcohol']}, '$sum',0 ]}},
+                          'Entertainment' : {$sum: { $cond: [{ $eq: ['$category', 'Entertainment']}, '$sum',0 ]}},
+                          'Health' : {$sum: { $cond: [{ $eq: ['$category', 'Health']}, '$sum',0 ]}},
+                          'Transport' : {$sum: { $cond: [{ $eq: ['$category', 'Transport']}, '$sum',0 ]}},
+                          'Housing' : {$sum: { $cond: [{ $eq: ['$category', 'Housing']}, '$sum',0 ]}},
+                          'Technique' : {$sum: { $cond: [{ $eq: ['$category', 'Technique']}, '$sum',0 ]}},
+                          'Communal, communication' : {$sum: { $cond: [{ $eq: ['$category', 'Communal, communication']}, '$sum',0 ]}},
+                          'Sports, hobbies' : {$sum: { $cond: [{ $eq: ['$category', 'Sports, hobbies']}, '$sum',0 ]}},
+                          'Education' : {$sum: { $cond: [{ $eq: ['$category', 'Education']}, '$sum',0 ]}},
+                          'Other' : {$sum: { $cond: [{ $eq: ['$category', 'Other']}, '$sum',0 ]}},
+             },
+              incomes: {  'Salary': {$sum: { $cond: [{ $eq: ['$category', 'Salary'] }, '$sum', 0 ]}},
+                          'AddIncome': {$sum: { $cond: [{ $eq: ['$category', 'Add income'] }, '$sum', 0 ]}},
+            },
       },
-      ]);
+    },
+        {
+          $sort:{sum: 1},
+      },
+      ]); 
       return res.status(200).json(result);
     } catch (error) {
-      next(error);
+      return next((BadRequest("Bad Request")))
     }
 }
 
