@@ -41,7 +41,7 @@ async function googleRedirect(req, res, next) {
     const { email } = userData.data.email;
     const { balance } = userData.data.balance;
 
-    let user = await Users.findOne({ email });
+    const user = await Users.findOne({ email });
 
     if (!user) {
       const createdPassword = nanoid();
@@ -57,14 +57,17 @@ async function googleRedirect(req, res, next) {
         verificationToken: null,
       });
     }
-    const token = jwt.sign({ id: storedUser._id }, JWT_CODE, {
-      expiresIn: "10h",
+    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "1d",
     });
-
-    await Users.findByIdAndUpdate(user._id, { token }, { new: true });
+    await Users.findByIdAndUpdate(
+      { _id: user._id },
+      { accessToken: accessToken },
+      { new: true }
+    );
 
     return res.redirect(
-      `${FRONTEND_URL}?email=${email}&token=${token}&balance=${balance}`
+      `${FRONTEND_URL}?email=${email}&accessToken=${accessToken}&balance=${balance}`
     );
   } catch (error) {
     next(error);
