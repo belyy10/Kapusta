@@ -59,14 +59,19 @@ async function googleRedirect(req, res, next) {
     const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
       expiresIn: "1d",
     });
+    const refreshToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "30d",
+    });
+
     await Users.findByIdAndUpdate(
       { _id: user._id },
       { accessToken: accessToken },
+      { refreshToken: refreshToken },
       { new: true }
     );
 
     return res.redirect(
-      `${FRONTEND_URL}?email=${user.email}&accessToken=${accessToken}`
+      `${FRONTEND_URL}?email=${user.email}&accessToken=${accessToken}&refreshToken=${refreshToken}`
     );
   } catch (error) {
     next(error);
