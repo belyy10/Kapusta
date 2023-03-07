@@ -7,6 +7,7 @@ const { nanoid } = require("nanoid");
 async function reportsByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
   const { type } = req.query;
+
   console.log("req.params", req.query);
 
   if (!type) {
