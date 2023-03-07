@@ -64,7 +64,7 @@ async function googleRedirect(req, res, next) {
       { accessToken: accessToken },
       { new: true }
     );
-    return res.redirect(`${FRONTEND_URL}?accessToken="Bearer ${accessToken}"`);
+    return res.redirect(`${FRONTEND_URL}?accessToken=${accessToken}`);
   } catch (error) {
     next(error);
   }
