@@ -67,7 +67,7 @@ async function googleRedirect(req, res, next) {
     );
 
     return res.redirect(
-      `${FRONTEND_URL}?email=${user.email}&accessToken=${accessToken}`
+      `${FRONTEND_URL}?email=${user.email}&accessToken=${accessToken}&balance=${user.balance}`
     );
   } catch (error) {
     next(error);
