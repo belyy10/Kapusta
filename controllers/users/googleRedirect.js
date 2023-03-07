@@ -65,9 +65,8 @@ async function googleRedirect(req, res, next) {
       { accessToken: accessToken },
       { new: true }
     );
-    const { balance } = userData.balance;
     return res.redirect(
-      `${FRONTEND_URL}?email=${user.email}&accessToken=${accessToken}&balance=${balance}`
+      `${FRONTEND_URL}?email=${user.email}&accessToken=${accessToken}`
     );
   } catch (error) {
     next(error);
