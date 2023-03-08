@@ -39,9 +39,6 @@ async function googleRedirect(req, res, next) {
     });
 
     const { email } = userData.data;
-    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
-      expiresIn: "1d",
-    });
 
     let user = await Users.findOne({ email });
     if (!user) {
@@ -57,7 +54,9 @@ async function googleRedirect(req, res, next) {
         verificationToken: null,
       });
     }
-
+    const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
+      expiresIn: "1d",
+    });
     await Users.findByIdAndUpdate(
       { _id: user._id },
       { accessToken: accessToken },
