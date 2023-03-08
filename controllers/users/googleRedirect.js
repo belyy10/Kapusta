@@ -52,7 +52,7 @@ async function googleRedirect(req, res, next) {
         password: hashedPassword,
         balance: null,
         verify: true,
-        verificationToken: nanoid(),
+        verificationToken: null,
       });
     }
     const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
