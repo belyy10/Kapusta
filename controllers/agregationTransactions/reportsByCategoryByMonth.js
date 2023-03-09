@@ -26,12 +26,14 @@ async function reportsByCategoryByMonth(req, res, next) {
         $match: {
           owner: _id,
           type: type,
-          $expr: { $and:
-            [{ $eq: [dateMon, { $month: "$date" }]},
-              { $eq: [dateYear, { $year: "$date" }] }],
+          $expr: {
+            $and: [
+              { $eq: [dateMon, { $month: "$date" }] },
+              { $eq: [dateYear, { $year: "$date" }] },
+            ],
           },
         },
-  },
+      },
 
       {
         $group: {
@@ -52,7 +54,6 @@ async function reportsByCategoryByMonth(req, res, next) {
         $sort: { sum: -1 },
       },
     ]);
-
 
     return res.status(200).json(result);
   } catch (error) {
