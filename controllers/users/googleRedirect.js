@@ -45,7 +45,6 @@ async function googleRedirect(req, res, next) {
       const createdPassword = nanoid();
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(createdPassword, salt);
-
       user = await Users.create({
         email,
         password: hashedPassword,
