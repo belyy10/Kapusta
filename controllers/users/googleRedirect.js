@@ -41,30 +41,27 @@ async function googleRedirect(req, res, next) {
     const { email } = userData.data;
 
     let user = await Users.findOne({ email });
-
     if (!user) {
       const createdPassword = nanoid();
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(createdPassword, salt);
-
       user = await Users.create({
         email,
         password: hashedPassword,
         balance: null,
         verify: true,
-        verificationToken: nanoid(),
+        verificationToken: null,
       });
     }
     const accessToken = jwt.sign({ id: user.id }, JWT_CODE, {
       expiresIn: "1d",
     });
-
     await Users.findByIdAndUpdate(
       { _id: user._id },
       { accessToken: accessToken },
       { new: true }
     );
-    return res.redirect(`${FRONTEND_URL}?accessToken=${accessToken}`);
+    return res.redirect(`${FRONTEND_URL}login/?accessToken=${accessToken}`);
   } catch (error) {
     next(error);
   }

@@ -47,10 +47,13 @@ async function reportsByCategoryByMonth(req, res, next) {
           sum: "$sum",
         },
       },
+
       {
         $sort: { sum: -1 },
       },
     ]);
+
+
     return res.status(200).json(result);
   } catch (error) {
     return next(BadRequest("Bad Request"));
