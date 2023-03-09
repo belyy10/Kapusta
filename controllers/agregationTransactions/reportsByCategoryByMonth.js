@@ -11,7 +11,7 @@ async function reportsByCategoryByMonth(req, res, next) {
   const dateYear = Number(date.slice(0, 4));
   const dateMon = Number(date.slice(5, 7));
 
-  if (!type) {
+  if (!type || !date) {
     return next(BadRequest("Bad Request"));
   }
 
@@ -31,21 +31,20 @@ async function reportsByCategoryByMonth(req, res, next) {
               { $eq: [dateYear, { $year: "$date" }] }],
           },
         },
-      },
+  },
+
       {
         $group: {
-          _id: {
-            category: "$category",
-            year: { $year: "$date" },
-            month: { $month: "$date" },
-          },
+          _id: "$category",
           sum: { $sum: "$sum" },
         },
       },
       {
         $project: {
+          _id: 0,
           id: nanoid(),
-          sum: { $sum: "$sum" },
+          name: "$_id",
+          sum: "$sum",
         },
       },
 
