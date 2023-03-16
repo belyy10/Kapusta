@@ -9,6 +9,9 @@ async function reportsByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
   const { type, date } = req.query;
 
+  const dateYear = Number(date.slice(0, 4));
+  const dateMon = Number(date.slice(5, 7));
+
   if (!type || !date) {
     return next(BadRequest("Bad Request"));
   }
@@ -26,8 +29,8 @@ async function reportsByCategoryByMonth(req, res, next) {
           type: type,
           $expr: {
             $and: [
-              { $eq: [date.mm, { $month: "$date.mm" }] },
-              { $eq: [date.year, { $year: "$date.year" }] },
+              { $eq: [dateMon, { $month: "$date" }] },
+              { $eq: [dateYear, { $year: "$date" }] },
             ],
           },
         },
@@ -48,7 +51,7 @@ async function reportsByCategoryByMonth(req, res, next) {
         },
       },
       {
-        $sort: { sum: 1 },
+        $sort: { sum: -1 },
       },
     ]);
 
