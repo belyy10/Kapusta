@@ -4,7 +4,6 @@ const { Transaction } = require("../../models/transaction.js");
 const { BadRequest } = require("http-errors");
 const { nanoid } = require("nanoid");
 
-
 async function reportsByCategoryByMonth(req, res, next) {
   const { _id } = req.user;
   const { type, date } = req.query;
@@ -16,10 +15,10 @@ async function reportsByCategoryByMonth(req, res, next) {
     return next(BadRequest("Bad Request"));
   }
 
-  const userId = await Users.findById({ _id });   
+  const userId = await Users.findById({ _id });
   if (!userId) {
     return next(Unauthorized("Not authorized"));
-  };
+  }
 
   try {
     const result = await Transaction.aggregate([
@@ -55,16 +54,23 @@ async function reportsByCategoryByMonth(req, res, next) {
       },
     ]);
 
-      const resId = result.map( result => {
-        const id ={
-          id: nanoid(),
-          date: result.date,
-          name: result.name, 
-          sum: result.sum,
-          type: result.type,
-        };
-        return id;
-  })
+    // const resId = result.map((result) => {
+    //   const id = {
+    //     id: nanoid(),
+    //     date: result.date,
+    //     name: result.name,
+    //     // sum: result.sum,
+    //     type: result.type,
+    //   };
+    //   return id;
+    // });
+
+    const resId =
+      type === "expenses"
+        ? [...result]
+            .reverse()
+            .map((rep) => ({ ...rep, sum: rep.sum * -1, id: nanoid() }))
+        : result;
 
     return res.status(200).json(resId);
   } catch (error) {
