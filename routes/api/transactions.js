@@ -49,6 +49,5 @@ router.get("/", auth, getTransactions);
 router.get("/expensesByMonthYear", auth, expensesByMonthYear);
 router.get("/incomesByMonthYear", auth, incomesByMonthYear);
 router.get("/reportbyexpenses", auth, reportsByCategoryByMonth);
-router.get("/reportbyincomes", auth, reportsByCategoryByMonth);
 
 module.exports = router;
